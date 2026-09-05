@@ -1,1 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PortNet Ops — Port Network Design &amp; Monitoring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#081722;
+    --navy-900:#0b2233;
+    --navy-800:#122d40;
+    --navy-700:#1b3c52;
+    --line:#274a63;
+    --ink:#e7eef2;
+    --ink-dim:#93a9b8;
+    --amber:#e8a33d;
+    --amber-dim:#a97a34;
+    --teal:#4fb8a8;
+    --red:#e2574c;
+    --green:#4fb87a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--navy-950);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', sans-serif;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:var(--teal);}
 
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    border-bottom:1px solid var(--line);
+    padding:48px 0 32px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:32px;
+    justify-content:space-between;
+    align-items:flex-end;
+  }
+  .hero-title h1{font-size:2.2rem;font-weight:700;color:var(--ink);}
+  .hero-title .kicker{
+    color:var(--amber);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.8rem;
+    margin-bottom:10px;
+    display:block;
+  }
+  .hero-title p{
+    max-width:520px;
+    color:var(--ink-dim);
+    margin-top:12px;
+    font-size:0.98rem;
+  }
+  .hero-stats{
+    display:flex;
+    gap:28px;
+  }
+  .hero-stat{text-align:right;}
+  .hero-stat .num{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:2rem;
+    font-weight:700;
+    color:var(--teal);
+  }
+  .hero-stat .lbl{
+    color:var(--ink-dim);
+    font-size:0.78rem;
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  section{padding:44px 0;border-bottom:1px solid var(--line);}
+  section:last-child{border-bottom:none;}
+  .section-head{margin-bottom:22px;}
+  .section-head h2{font-size:1.3rem;color:var(--ink);}
+  .section-head span{
+    display:block;
+    color:var(--ink-dim);
+    font-size:0.9rem;
+    margin-top:6px;
+    max-width:640px;
+  }
+
+  /* ---------- TOPOLOGY ---------- */
+  .topo-box{
+    background:var(--navy-900);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:24px;
+  }
+  #topology{width:100%;height:auto;display:block;}
+  .node-label{font-family:'IBM Plex Mono', monospace;font-size:12px;fill:var(--ink);}
+  .node-vlan{font-family:'IBM Plex Mono', monospace;font-size:10.5px;fill:var(--amber);}
+
+  /* ---------- TABLE ---------- */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.88rem;
+  }
+  thead th{
+    text-align:left;
+    color:var(--ink-dim);
+    font-weight:500;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    padding:8px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  tbody td{
+    padding:12px 14px;
+    border-bottom:1px solid var(--navy-800);
+    color:var(--ink);
+  }
+  tbody tr:hover{background:var(--navy-900);}
+  td.mono, th.mono{font-family:'IBM Plex Mono', monospace;}
+  .zone-dot{
+    display:inline-block;width:8px;height:8px;border-radius:50%;
+    margin-right:8px;
+  }
+
+  /* ---------- MONITOR ---------- */
+  .monitor-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:16px;
+  }
+  .zone-card{
+    background:var(--navy-900);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:16px 18px;
+  }
+  .zone-card .zc-head{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
+  }
+  .zone-card .zc-head h3{font-size:0.95rem;}
+  .status-pill{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    padding:2px 8px;
+    border-radius:20px;
+    border:1px solid currentColor;
+  }
+  .metric-row{margin-bottom:12px;}
+  .metric-row .m-top{
+    display:flex;justify-content:space-between;
+    font-size:0.75rem;color:var(--ink-dim);
+    font-family:'IBM Plex Mono', monospace;
+    margin-bottom:5px;
+  }
+  .bar-track{
+    background:var(--navy-800);
+    height:7px;
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    border-radius:4px;
+    transition:width 0.6s ease, background 0.6s ease;
+  }
+
+  /* ---------- CONGESTION ---------- */
+  .risk-chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    padding:3px 9px;
+    border-radius:3px;
+    display:inline-block;
+  }
+
+  /* ---------- RATIONALE ---------- */
+  .rationale-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:20px;
+  }
+  .rationale-item{
+    border-left:2px solid var(--amber);
+    padding-left:16px;
+  }
+  .rationale-item h3{font-size:0.95rem;margin-bottom:6px;color:var(--ink);}
+  .rationale-item p{font-size:0.86rem;color:var(--ink-dim);margin:0;}
+
+  footer{
+    padding:28px 0 8px;
+    color:var(--ink-dim);
+    font-size:0.78rem;
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width:640px){
+    .hero{flex-direction:column;align-items:flex-start;}
+    .hero-stats{gap:20px;}
+    .hero-stat .num{font-size:1.5rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-title">
+      <span class="kicker">PORT IT INFRASTRUCTURE — NETWORK OPERATIONS</span>
+      <h1>PortNet Ops</h1>
+      <p>A zoned network design and live monitoring view for a port facility — subnetting, VLAN segmentation, bandwidth allocation, and vessel scheduling in one operational dashboard.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">5</div>
+        <div class="lbl">NETWORK ZONES</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" id="stat-uptime">--</div>
+        <div class="lbl">AVG UPTIME</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" id="stat-vessels">--</div>
+        <div class="lbl">VESSELS INBOUND</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOPOLOGY -->
+  <section>
+    <div class="section-head">
+      <h2>Network Topology</h2>
+      <span>Five zones, each on its own VLAN, meeting at the Port Operations Center core switch. Segmentation keeps CCTV, comms, and administrative traffic isolated from one another.</span>
+    </div>
+    <div class="topo-box">
+      <svg id="topology" viewBox="0 0 1000 380" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#274a63" stroke-width="2" fill="none">
+          <line x1="500" y1="190" x2="150" y2="60"/>
+          <line x1="500" y1="190" x2="850" y2="60"/>
+          <line x1="500" y1="190" x2="150" y2="320"/>
+          <line x1="500" y1="190" x2="850" y2="320"/>
+        </g>
+        <g>
+          <rect x="430" y="160" width="140" height="60" rx="4" fill="#122d40" stroke="#e8a33d" stroke-width="1.5"/>
+          <text x="500" y="185" text-anchor="middle" class="node-label" font-weight="600">Port Ops Center</text>
+          <text x="500" y="202" text-anchor="middle" class="node-vlan">CORE SWITCH</text>
+        </g>
+        <g>
+          <rect x="60" y="30" width="180" height="60" rx="4" fill="#0b2233" stroke="#4fb8a8" stroke-width="1.5"/>
+          <text x="150" y="55" text-anchor="middle" class="node-label" font-weight="600">Cargo Yard</text>
+          <text x="150" y="72" text-anchor="middle" class="node-vlan">VLAN 10 · 10.10.0.0/24</text>
+        </g>
+        <g>
+          <rect x="760" y="30" width="180" height="60" rx="4" fill="#0b2233" stroke="#4fb8a8" stroke-width="1.5"/>
+          <text x="850" y="55" text-anchor="middle" class="node-label" font-weight="600">Admin Office</text>
+          <text x="850" y="72" text-anchor="middle" class="node-vlan">VLAN 20 · 10.20.0.0/24</text>
+        </g>
+        <g>
+          <rect x="60" y="290" width="180" height="60" rx="4" fill="#0b2233" stroke="#4fb8a8" stroke-width="1.5"/>
+          <text x="150" y="315" text-anchor="middle" class="node-label" font-weight="600">Ship-to-Shore Comms</text>
+          <text x="150" y="332" text-anchor="middle" class="node-vlan">VLAN 30 · 10.30.0.0/25</text>
+        </g>
+        <g>
+          <rect x="760" y="290" width="180" height="60" rx="4" fill="#0b2233" stroke="#e2574c" stroke-width="1.5"/>
+          <text x="850" y="315" text-anchor="middle" class="node-label" font-weight="600">CCTV &amp; Security</text>
+          <text x="850" y="332" text-anchor="middle" class="node-vlan">VLAN 40 · 10.40.0.0/26</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ADDRESSING TABLE -->
+  <section>
+    <div class="section-head">
+      <h2>IP Addressing &amp; VLAN Segmentation</h2>
+      <span>Subnet sizes are matched to expected device count per zone rather than a flat scheme, to avoid wasting address space.</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Zone</th>
+          <th class="mono">VLAN</th>
+          <th class="mono">Subnet</th>
+          <th class="mono">Gateway</th>
+          <th class="mono">Usable Hosts</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody id="addr-table"></tbody>
+    </table>
+  </section>
+
+  <!-- LIVE MONITOR -->
+  <section>
+    <div class="section-head">
+      <h2>Live Bandwidth &amp; Uptime Monitor</h2>
+      <span>Simulated telemetry per zone, refreshing every few seconds. Status shifts to amber past 75% bandwidth use and red past 90%.</span>
+    </div>
+    <div class="monitor-grid" id="monitor-grid"></div>
+  </section>
+
+  <!-- VESSEL / CONGESTION -->
+  <section>
+    <div class="section-head">
+      <h2>Vessel Schedule &amp; Berth Congestion</h2>
+      <span>Congestion risk is flagged when two vessels are assigned to the same berth zone within a two-hour window.</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Vessel</th>
+          <th class="mono">ETA</th>
+          <th>Berth Zone</th>
+          <th>Cargo</th>
+          <th>Congestion Risk</th>
+        </tr>
+      </thead>
+      <tbody id="vessel-table"></tbody>
+    </table>
+  </section>
+
+  <!-- RATIONALE -->
+  <section>
+    <div class="section-head">
+      <h2>Design Rationale</h2>
+      <span>The reasoning behind each segmentation decision — the part an interview usually asks about.</span>
+    </div>
+    <div class="rationale-grid">
+      <div class="rationale-item">
+        <h3>Why CCTV sits on its own /26</h3>
+        <p>Security camera traffic is isolated so a compromised admin device can't reach surveillance feeds, and so continuous video traffic can't crowd out other zones' bandwidth.</p>
+      </div>
+      <div class="rationale-item">
+        <h3>Why comms gets a /25</h3>
+        <p>Ship-to-shore communication needs headroom for burst traffic during berthing and cargo handoffs, so it's sized larger than admin despite fewer fixed devices.</p>
+      </div>
+      <div class="rationale-item">
+        <h3>Why cargo yard is a /24</h3>
+        <p>The largest device count — handheld scanners, yard cameras, crane controllers — needs the most address space of any zone.</p>
+      </div>
+      <div class="rationale-item">
+        <h3>Why everything meets at one core</h3>
+        <p>A single core switch keeps routing between zones centrally controlled, so access rules between zones are enforced in one place, not scattered across the network.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    PortNet Ops — a port network design &amp; monitoring simulation. All telemetry on this page is generated in-browser for demonstration.
+  </footer>
+
+</div>
+
+<script>
+  const zones = [
+    { name:"Cargo Yard",         vlan:10, subnet:"10.10.0.0/24", gateway:"10.10.0.1", hosts:254, purpose:"Yard scanners, crane controllers, gate terminals", color:"#4fb8a8" },
+    { name:"Admin Office",       vlan:20, subnet:"10.20.0.0/24", gateway:"10.20.0.1", hosts:254, purpose:"Staff workstations, print/file services", color:"#4fb8a8" },
+    { name:"Ship-to-Shore Comms",vlan:30, subnet:"10.30.0.0/25", gateway:"10.30.0.1", hosts:126, purpose:"Vessel comms, berthing coordination links", color:"#4fb8a8" },
+    { name:"CCTV & Security",    vlan:40, subnet:"10.40.0.0/26", gateway:"10.40.0.1", hosts:62,  purpose:"Cameras, access-control panels, alarm systems", color:"#e2574c" },
+    { name:"Port Ops Center",    vlan:1,  subnet:"10.1.0.0/28",  gateway:"10.1.0.1",  hosts:14,  purpose:"Core switch, monitoring server, uplink", color:"#e8a33d" },
+  ];
+
+  const addrTable = document.getElementById("addr-table");
+  zones.forEach(z=>{
+    addrTable.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td><span class="zone-dot" style="background:${z.color}"></span>${z.name}</td>
+        <td class="mono">${z.vlan}</td>
+        <td class="mono">${z.subnet}</td>
+        <td class="mono">${z.gateway}</td>
+        <td class="mono">${z.hosts}</td>
+        <td>${z.purpose}</td>
+      </tr>`);
+  });
+
+  const monitorGrid = document.getElementById("monitor-grid");
+  const monitorZones = zones.map(z => ({
+    ...z,
+    bandwidth: 30 + Math.random()*30,
+    uptime: 98 + Math.random()*1.8
+  }));
+
+  function statusFor(pct){
+    if(pct >= 90) return { label:"CRITICAL", color:"var(--red)" };
+    if(pct >= 75) return { label:"ELEVATED", color:"var(--amber)" };
+    return { label:"NOMINAL", color:"var(--green)" };
+  }
+
+  function renderMonitor(){
+    monitorGrid.innerHTML = "";
+    monitorZones.forEach((z, i)=>{
+      const st = statusFor(z.bandwidth);
+      monitorGrid.insertAdjacentHTML("beforeend", `
+        <div class="zone-card">
+          <div class="zc-head">
+            <h3>${z.name}</h3>
+            <span class="status-pill" style="color:${st.color}">${st.label}</span>
+          </div>
+          <div class="metric-row">
+            <div class="m-top"><span>BANDWIDTH</span><span>${z.bandwidth.toFixed(0)}%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${z.bandwidth}%;background:${st.color}"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="m-top"><span>UPTIME</span><span>${z.uptime.toFixed(1)}%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:${z.uptime}%;background:var(--teal)"></div></div>
+          </div>
+        </div>`);
+    });
+
+    const avgUptime = (monitorZones.reduce((a,z)=>a+z.uptime,0)/monitorZones.length).toFixed(1);
+    document.getElementById("stat-uptime").textContent = avgUptime + "%";
+  }
+
+  function tickMonitor(){
+    monitorZones.forEach(z=>{
+      const drift = (Math.random()-0.5)*14;
+      z.bandwidth = Math.min(100, Math.max(15, z.bandwidth + drift));
+      z.uptime = Math.min(100, Math.max(95, z.uptime + (Math.random()-0.5)*0.4));
+    });
+    renderMonitor();
+  }
+
+  renderMonitor();
+  setInterval(tickMonitor, 3000);
+
+  const vessels = [
+    { name:"MV Coral Horizon", eta:"06:30", berth:"Cargo Yard" },
+    { name:"MV Northern Star", eta:"07:10", berth:"Cargo Yard" },
+    { name:"Azure Voyager",    eta:"09:45", berth:"Ship-to-Shore Comms" },
+    { name:"MV Delta Trader",  eta:"13:20", berth:"Cargo Yard" },
+    { name:"Pacific Dawn",     eta:"18:00", berth:"Ship-to-Shore Comms" },
+  ];
+  const cargoTypes = ["Containers","Bulk grain","Passengers","Fuel","Containers"];
+
+  function toMinutes(t){
+    const [h,m] = t.split(":").map(Number);
+    return h*60+m;
+  }
+
+  function computeRisk(v, i){
+    let risk = false;
+    vessels.forEach((other, j)=>{
+      if(i===j || other.berth !== v.berth) return;
+      if(Math.abs(toMinutes(other.eta) - toMinutes(v.eta)) <= 120) risk = true;
+    });
+    return risk;
+  }
+
+  const vesselTable = document.getElementById("vessel-table");
+  vessels.forEach((v,i)=>{
+    const risk = computeRisk(v,i);
+    vesselTable.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${v.name}</td>
+        <td class="mono">${v.eta}</td>
+        <td>${v.berth}</td>
+        <td>${cargoTypes[i]}</td>
+        <td><span class="risk-chip" style="background:${risk ? 'rgba(226,87,76,0.15)' : 'rgba(79,184,122,0.15)'};color:${risk ? 'var(--red)' : 'var(--green)'}">${risk ? "HIGH — berth overlap" : "LOW"}</span></td>
+      </tr>`);
+  });
+
+  document.getElementById("stat-vessels").textContent = vessels.length;
+</script>
+</body>
+  </html>
