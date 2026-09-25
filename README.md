@@ -1,3 +1,8 @@
+
+![HTML](https://img.shields.io/badge/HTML5-Static-orange)
+![CSS](https://img.shields.io/badge/CSS3-Styling-blue)
+![JavaScript](https://img.shields.io/badge/JavaScript-Vanilla-yellow)
+
 PortNet Ops
 A single-page network design and monitoring dashboard for a port facility — built to demonstrate practical networking fundamentals (subnetting, VLAN segmentation, bandwidth planning) alongside a light data-analytics layer (vessel scheduling and berth congestion detection).
 Live demo: enable GitHub Pages on this repo (Settings → Pages → Deploy from branch → main → /root), then visit https://<your-username>.github.io/<repo-name>/.
