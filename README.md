@@ -6,6 +6,20 @@
 
 A single-page **port network design and monitoring simulation** that demonstrates practical networking fundamentals alongside a small operations-analytics layer.
 
+## Dashboard screenshots
+
+### PortNet Ops — Overview
+
+![PortNet Ops Dashboard Overview](overview.jpg)
+
+### Network Monitoring & Segmentation
+
+![PortNet Ops Network Monitoring](monitoring.jpg)
+
+### Vessel Operations & Analytics
+
+![PortNet Ops Operations Analytics](operations.jpg)
+
 ## What it demonstrates
 
 - **Network topology** — five operational zones connected through a central Port Operations Center.
@@ -47,11 +61,9 @@ The project is intentionally lightweight and can be served as static files.
 
 Enable GitHub Pages from **Settings → Pages → Deploy from branch → `main` → `/ (root)`**.
 
-The expected project URL is:
+The live project is available at:
 
 **https://gunasheela112-lab.github.io/portnet-ops/**
-
-If the URL does not load yet, GitHub Pages still needs to be enabled in the repository settings.
 
 ## Run locally
 
@@ -75,6 +87,9 @@ These limitations are intentional so the project demonstrates the networking and
 
 - `index.html` — dashboard, topology, monitoring simulation, and vessel analytics
 - `README.md` — project documentation
+- `overview.jpg` — dashboard overview screenshot
+- `monitoring.jpg` — network monitoring screenshot
+- `operations.jpg` — vessel operations and analytics screenshot
 - `LICENSE` — license information
 
 ## License
