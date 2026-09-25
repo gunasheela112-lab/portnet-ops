@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="PortNet Ops — simulated port network design, VLAN segmentation, monitoring, and vessel scheduling dashboard.">
 <title>PortNet Ops — Port Network Design &amp; Monitoring</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +51,7 @@
     justify-content:space-between;
     align-items:flex-end;
   }
-  .hero-title h1{font-size:2.2rem;font-weight:700;color:var(--ink);}
+  .hero-title h1{font-size:clamp(1.8rem,4vw,2.2rem);font-weight:700;color:var(--ink);}
   .hero-title .kicker{
     color:var(--amber);
     font-family:'IBM Plex Mono', monospace;
@@ -82,6 +83,7 @@
   }
 
   section{padding:44px 0;border-bottom:1px solid var(--line);}
+  .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;}
   section:last-child{border-bottom:none;}
   .section-head{margin-bottom:22px;}
   .section-head h2{font-size:1.3rem;color:var(--ink);}
@@ -107,6 +109,7 @@
   /* ---------- TABLE ---------- */
   table{
     width:100%;
+    min-width:760px;
     border-collapse:collapse;
     font-size:0.88rem;
   }
@@ -202,6 +205,8 @@
     font-family:'IBM Plex Mono', monospace;
   }
 
+  @media (prefers-reduced-motion:reduce){.bar-fill{transition:none;}}
+
   @media (max-width:640px){
     .hero{flex-direction:column;align-items:flex-start;}
     .hero-stats{gap:20px;}
@@ -237,6 +242,7 @@
   <!-- TOPOLOGY -->
   <section>
     <div class="section-head">
+      <span class="section-tag">Architecture</span>
       <h2>Network Topology</h2>
       <span>Five zones, each on its own VLAN, meeting at the Port Operations Center core switch. Segmentation keeps CCTV, comms, and administrative traffic isolated from one another.</span>
     </div>
@@ -279,7 +285,9 @@
 
   <!-- ADDRESSING TABLE -->
   <section>
+
     <div class="section-head">
+      <span class="section-tag">Segmentation</span>
       <h2>IP Addressing &amp; VLAN Segmentation</h2>
       <span>Subnet sizes are matched to expected device count per zone rather than a flat scheme, to avoid wasting address space.</span>
     </div>
@@ -301,6 +309,7 @@
   <!-- LIVE MONITOR -->
   <section>
     <div class="section-head">
+      <span class="section-tag">Simulation</span>
       <h2>Live Bandwidth &amp; Uptime Monitor</h2>
       <span>Simulated telemetry per zone, refreshing every few seconds. Status shifts to amber past 75% bandwidth use and red past 90%.</span>
     </div>
@@ -310,6 +319,7 @@
   <!-- VESSEL / CONGESTION -->
   <section>
     <div class="section-head">
+      <span class="section-tag">Operations Analytics</span>
       <h2>Vessel Schedule &amp; Berth Congestion</h2>
       <span>Congestion risk is flagged when two vessels are assigned to the same berth zone within a two-hour window.</span>
     </div>
@@ -330,6 +340,7 @@
   <!-- RATIONALE -->
   <section>
     <div class="section-head">
+      <span class="section-tag">Engineering Notes</span>
       <h2>Design Rationale</h2>
       <span>The reasoning behind each segmentation decision — the part an interview usually asks about.</span>
     </div>
